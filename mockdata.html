@@ -6,26 +6,49 @@
     <title>Danh sách thông tin khách hàng</title>
     <!-- Link tới Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Style cho dòng được đánh dấu */
+        .marked {
+            background-color: rgba(255, 0, 0, 0.1) !important; /* Màu nền đỏ */
+        }
+        /* Định dạng khi checkbox được chọn */
+        .checkbox-mark input[type="checkbox"]:checked {
+            background-color: red !important; /* Màu nền đỏ cho checkbox */
+        }
+        /* Định dạng cho ô checkbox */
+        .checkbox-mark {
+            position: relative;
+        }
+        .checkbox-mark input[type="checkbox"] {
+            cursor: pointer;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+    
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="mb-4">Danh sách thông tin khách hàng đăng ký</h1>
+        <h1 class="mb-4" style="color: orange; text-align: center;">Danh sách thông tin khách hàng đăng ký</h1>
         <div class="table-responsive">
             <table class="table table-bordered">
                 <thead>
                     <tr>
+                        <th>Trạng Thái</th> <!-- Thêm cột cho checkbox -->
                         <th>ID</th>
-                        <th>Tên quán</th>
+                        <th>Name</th>
                         <th>Email</th>
-                        <th>Chủ tài khoản</th>
+                        <th>Chủ TK</th>
                         <th>CMND/CCCD</th>
                         <th>Ngày cấp</th>
                         <th>Nơi cấp</th>
                         <th>Ngân hàng</th>
-                        <th>Số tài khoản</th>
+                        <th>STK</th>
                         <th>Thời gian hoạt động</th>
                         <th>Nhận dạng quán</th>
-                        <th>Số điện thoại</th>
+                        <th>SĐT</th>
                         <th>Địa chỉ</th>
                     </tr>
                 </thead>
@@ -36,41 +59,70 @@
         </div>
     </div>
 
-    <!-- Link tới Bootstrap JavaScript (chèn trước </body>) -->
+
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var apiUrl = 'https://662a2fff67df268010a2eab5.mockapi.io/thongtinkhachhangshoppe';
+<script>document.addEventListener('DOMContentLoaded', function() {
+    var apiUrl = 'https://662a2fff67df268010a2eab5.mockapi.io/thongtinkhachhangshoppe';
 
-            fetch(apiUrl)
-                .then(response => response.json())
-                .then(data => {
-                    var tableBody = document.getElementById('customer-info-body');
-                    data.forEach(function(customer) {
-                        var row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${customer.id}</td>
-                            <td>${customer.tenquan}</td>
-                            <td>${customer.email}</td>
-                            <td>${customer.chutaikhoan}</td>
-                            <td>${customer.cmnd}</td>
-                            <td>${customer.ngaycap}</td>
-                            <td>${customer.noicap}</td>
-                            <td>${customer.nganhang}</td>
-                            <td>${customer.sotaikhoan}</td>
-                            <td>${customer.thoigianhoatdong}</td>
-                            <td>${customer.nhandienquan}</td>
-                            <td>${customer.phone}</td>
-                            <td>${customer.diachi}</td>
-                        `;
-                        tableBody.appendChild(row);
-                    });
-                })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+            var tableBody = document.getElementById('customer-info-body');
+            data.forEach(function(customer) {
+                var row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="checkbox-mark">
+                        <input type="checkbox" style = 'margin-left: 4px' class="form-check-input" ${customer.trangthai === 1 ? 'checked' : ''} data-id="${customer.id}">
+                    </td> <!-- Thêm ô checkbox -->
+                    <td>${customer.id}</td>
+                    <td>${customer.tenquan}</td>
+                    <td>${customer.email}</td>
+                    <td>${customer.chutaikhoan}</td>
+                    <td>${customer.cmnd}</td>
+                    <td>${customer.ngaycap}</td>
+                    <td>${customer.noicap}</td>
+                    <td>${customer.nganhang}</td>
+                    <td>${customer.sotaikhoan}</td>
+                    <td>${customer.thoigianhoatdong}</td>
+                    <td>${customer.nhandienquan}</td>
+                    <td>${customer.phone}</td>
+                    <td>${customer.diachi}</td>
+                `;
+                tableBody.appendChild(row);
+
+                // Thêm sự kiện change cho checkbox
+                var checkbox = row.querySelector('.checkbox-mark input[type="checkbox"]');
+                checkbox.addEventListener('change', function() {
+                    var checked = this.checked ? 1 : 0; // Trạng thái mới của checkbox
+                    var customerId = this.getAttribute('data-id'); // ID của khách hàng
+                    updateCustomerStatus(customerId, checked); // Gửi yêu cầu cập nhật trạng thái của khách hàng
                 });
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
         });
-    </script>
+
+    // Hàm gửi yêu cầu cập nhật trạng thái của khách hàng đến API
+    function updateCustomerStatus(customerId, status) {
+        fetch(`${apiUrl}/${customerId}`, {
+            method: 'PUT', // Hoặc 'PATCH' tùy thuộc vào API của bạn
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ trangthai: status })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Customer status updated:', data);
+        })
+        .catch(error => {
+            console.error('Error updating customer status:', error);
+        });
+    }
+});
+</script>
+
 </body>
 </html>
