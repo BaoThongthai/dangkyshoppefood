@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh sách thông tin khách hàng</title>
+    <!-- Link tới Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Danh sách thông tin khách hàng đăng ký</h1>
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên quán</th>
+                        <th>Email</th>
+                        <th>Chủ tài khoản</th>
+                        <th>CMND/CCCD</th>
+                        <th>Ngày cấp</th>
+                        <th>Nơi cấp</th>
+                        <th>Ngân hàng</th>
+                        <th>Số tài khoản</th>
+                        <th>Thời gian hoạt động</th>
+                        <th>Nhận dạng quán</th>
+                        <th>Số điện thoại</th>
+                        <th>Địa chỉ</th>
+                    </tr>
+                </thead>
+                <tbody id="customer-info-body">
+                    <!-- Dữ liệu sẽ được thêm vào đây bằng JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Link tới Bootstrap JavaScript (chèn trước </body>) -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var apiUrl = 'https://662a2fff67df268010a2eab5.mockapi.io/thongtinkhachhangshoppe';
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    var tableBody = document.getElementById('customer-info-body');
+                    data.forEach(function(customer) {
+                        var row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${customer.id}</td>
+                            <td>${customer.tenquan}</td>
+                            <td>${customer.email}</td>
+                            <td>${customer.chutaikhoan}</td>
+                            <td>${customer.cmnd}</td>
+                            <td>${customer.ngaycap}</td>
+                            <td>${customer.noicap}</td>
+                            <td>${customer.nganhang}</td>
+                            <td>${customer.sotaikhoan}</td>
+                            <td>${customer.thoigianhoatdong}</td>
+                            <td>${customer.nhandienquan}</td>
+                            <td>${customer.phone}</td>
+                            <td>${customer.diachi}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        });
+    </script>
+</body>
+</html>
