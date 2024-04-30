@@ -62,66 +62,76 @@
 
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-<script>document.addEventListener('DOMContentLoaded', function() {
-    var apiUrl = 'https://662a2fff67df268010a2eab5.mockapi.io/thongtinkhachhangshoppe';
+<script>
+    // Kiểm tra mật khẩu trước khi tải trang
+    window.onload = function() {
+        var password = prompt("Nhập mật khẩu:");
+        // Thay "your_password_here" bằng mật khẩu thực của bạn
+        if (password !== "ainhishoppe") {
+            window.location.href = "password.html";
+        }
+    };
 
-    fetch(apiUrl)
-        .then(response => response.json())
-        .then(data => {
-            var tableBody = document.getElementById('customer-info-body');
-            data.forEach(function(customer) {
-                var row = document.createElement('tr');
-                row.innerHTML = `
-                    <td class="checkbox-mark">
-                        <input type="checkbox" style = 'margin-left: 4px' class="form-check-input" ${customer.trangthai === 1 ? 'checked' : ''} data-id="${customer.id}">
-                    </td> <!-- Thêm ô checkbox -->
-                    <td>${customer.id}</td>
-                    <td>${customer.tenquan}</td>
-                    <td>${customer.email}</td>
-                    <td>${customer.chutaikhoan}</td>
-                    <td>${customer.cmnd}</td>
-                    <td>${customer.ngaycap}</td>
-                    <td>${customer.noicap}</td>
-                    <td>${customer.nganhang}</td>
-                    <td>${customer.sotaikhoan}</td>
-                    <td>${customer.thoigianhoatdong}</td>
-                    <td>${customer.nhandienquan}</td>
-                    <td>${customer.phone}</td>
-                    <td>${customer.diachi}</td>
-                `;
-                tableBody.appendChild(row);
+    document.addEventListener('DOMContentLoaded', function() {
+        var apiUrl = 'https://662a2fff67df268010a2eab5.mockapi.io/thongtinkhachhangshoppe';
 
-                // Thêm sự kiện change cho checkbox
-                var checkbox = row.querySelector('.checkbox-mark input[type="checkbox"]');
-                checkbox.addEventListener('change', function() {
-                    var checked = this.checked ? 1 : 0; // Trạng thái mới của checkbox
-                    var customerId = this.getAttribute('data-id'); // ID của khách hàng
-                    updateCustomerStatus(customerId, checked); // Gửi yêu cầu cập nhật trạng thái của khách hàng
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                var tableBody = document.getElementById('customer-info-body');
+                data.forEach(function(customer) {
+                    var row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="checkbox-mark">
+                            <input type="checkbox" style = 'margin-left: 4px' class="form-check-input" ${customer.trangthai === 1 ? 'checked' : ''} data-id="${customer.id}">
+                        </td> <!-- Thêm ô checkbox -->
+                        <td>${customer.id}</td>
+                        <td>${customer.tenquan}</td>
+                        <td>${customer.email}</td>
+                        <td>${customer.chutaikhoan}</td>
+                        <td>${customer.cmnd}</td>
+                        <td>${customer.ngaycap}</td>
+                        <td>${customer.noicap}</td>
+                        <td>${customer.nganhang}</td>
+                        <td>${customer.sotaikhoan}</td>
+                        <td>${customer.thoigianhoatdong}</td>
+                        <td>${customer.nhandienquan}</td>
+                        <td>${customer.phone}</td>
+                        <td>${customer.diachi}</td>
+                    `;
+                    tableBody.appendChild(row);
+
+                    // Thêm sự kiện change cho checkbox
+                    var checkbox = row.querySelector('.checkbox-mark input[type="checkbox"]');
+                    checkbox.addEventListener('change', function() {
+                        var checked = this.checked ? 1 : 0; // Trạng thái mới của checkbox
+                        var customerId = this.getAttribute('data-id'); // ID của khách hàng
+                        updateCustomerStatus(customerId, checked); // Gửi yêu cầu cập nhật trạng thái của khách hàng
+                    });
                 });
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
             });
-        })
-        .catch(error => {
-            console.error('Error fetching data:', error);
-        });
 
-    // Hàm gửi yêu cầu cập nhật trạng thái của khách hàng đến API
-    function updateCustomerStatus(customerId, status) {
-        fetch(`${apiUrl}/${customerId}`, {
-            method: 'PUT', // Hoặc 'PATCH' tùy thuộc vào API của bạn
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ trangthai: status })
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Customer status updated:', data);
-        })
-        .catch(error => {
-            console.error('Error updating customer status:', error);
-        });
-    }
-});
+        // Hàm gửi yêu cầu cập nhật trạng thái của khách hàng đến API
+        function updateCustomerStatus(customerId, status) {
+            fetch(`${apiUrl}/${customerId}`, {
+                method: 'PUT', // Hoặc 'PATCH' tùy thuộc vào API của bạn
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ trangthai: status })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Customer status updated:', data);
+            })
+            .catch(error => {
+                console.error('Error updating customer status:', error);
+            });
+        }
+    });
 </script>
 
 </body>
